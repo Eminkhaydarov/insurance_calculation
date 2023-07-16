@@ -1,0 +1,33 @@
+version: '3.11'
+services:
+  web:
+    build: .
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  db:
+    container_name: "db"
+    image: postgres:15.0-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  aerich:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: aerich init-db
+    depends_on:
+      - db
+volumes:
+  postgres_data:
